@@ -11,3 +11,37 @@ export const createTodo: RequestHandler = (req, res, next) => {
 
   res.status(201).json({ message: "created Todo", createTodo: newTodo })
 }
+
+export const getTodos: RequestHandler = (req, res, next) => {
+  res.status(201).json({
+    message: "GET TODOS Success",
+    todos: [...TODOS],
+  })
+}
+
+export const updateTodo: RequestHandler<{ id: string }> = (req, res, next) => {
+  const todoId = req.params.id
+  const updatedText = (req.body as { text: string }).text
+  const todoIndex = TODOS.findIndex((todo) => todo.id === todoId)
+
+  if (todoIndex < 0) {
+    throw new Error("Could not find Todo")
+  }
+
+  TODOS[todoIndex] = new Todo(Math.random().toString(), updatedText)
+
+  res.status(201).json({ updateTodo: TODOS })
+}
+
+export const deleteTodo: RequestHandler<{ id: string }> = (req, res, next) => {
+  const todoId = req.params.id
+  const todoIndex = TODOS.findIndex((todo) => todo.id === todoId)
+
+  if (todoIndex < 0) {
+    throw new Error("Could not find Todo")
+  }
+
+  TODOS.splice(todoIndex, 1)
+
+  res.status(201).json({ deleteTodo: TODOS })
+}
